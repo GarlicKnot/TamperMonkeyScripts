@@ -11,28 +11,54 @@
 // @grant        none
 // ==/UserScript==
 
+
+var marketbar = 'body > div.container-fluid > div > div.col-md-9.main-page > div > div.panel-body > div > div:nth-child(1) > a.buy-order-select'
+var Material         = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-material';
+var RawFish          = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-raw-fish';
+var Food             = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-food';
+var Herb             = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-herb';
+var RefinedMaterial  = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-refined-material';
+var Ammunition       = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-ammunition';
+var CombatPotion     = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-combat-potion';
+var ConsumablePotion = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-consumable-potion';
+
+
+waitForKeyElements (
+  marketbar,
+  MoveToSell
+);
+
+function MovetoSell(jNode) {
+  $('body > div.container-fluid > div > div.col-md-9.main-page > div > div.panel-body > div > div:nth-child(1) > a.sell-order-select').trigger("click")
+  waitForKeyElements (
+    Food,
+    MoveToFood
+  );
+}
+
+
+function MoveToFood(jNode) {
+  $(Food).trigger("click");
+  console.log("Got This Far")
+
+}
+
+
 ///Open up buy orders
-function BuyOrders() {
+function Move() {
   ///Open up Buy Orders
   $('body > div.container-fluid > div > div.col-md-9.main-page > div > div.panel-body > div > div:nth-child(1) > a.buy-order-select').click();
 }
 
 function BuyOrderTypeSelection() {
-  ///Open up and click subesction
-  ///Define variables
-  var Material         = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-material';
-  var RawFish          = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-raw-fish';
-  var Food             = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-food';
-  var Herb             = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-herb';
-  var RefinedMaterial  = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-refined-material';
-  var Ammunition       = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-ammunition';
-  var CombatPotion     = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-combat-potion';
-  var ConsumablePotion = 'body > div.container-fluid > div > div.col-md-9.main-page > div.panel.panel-success > div.panel-body > div > div:nth-child(2) > div > a.filter-consumable-potion';
-
   ///Open up target subsection - edit this to target
-  $(Food).click();
+  waitForKeyElements (
+    Food,
+    ActivateSellSelection
+  );
 }
 
+function MoveToFoo
 
 
 waitForKeyElements(
