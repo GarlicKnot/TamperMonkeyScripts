@@ -28,7 +28,7 @@ var ManaPotionVal = 35; //integer
 
 //Destinations
 var ManaLocation     = 'https://talibri.com/combat_zones/3/adventure';
-var FightLocation    = 'https://talibri.com/combat_zones/7/adventure';
+var FightLocation    = 'https://talibri.com/combat_zones/10/adventure';
 var SitLocation      = 'https://talibri.com/combat_zones/7/adventure';
 
 //Exception Information
@@ -70,9 +70,9 @@ var FireHealEnemy         = [];
 function StandardCombo() {
   $("div.user-skill-bar").children()[0].click(); //Antipode
   $("div.user-skill-bar").children()[1].click(); //Freeze
-  $("div.user-skill-bar").children()[2].click(); //Ignite
   $("div.user-skill-bar").children()[3].click(); //Lightning
   $("div.user-skill-bar").children()[4].click(); //Earth
+  $("div.user-skill-bar").children()[2].click(); //Ignite
 }
 
 //Weak to Electric / Strong to Earth
@@ -129,6 +129,38 @@ function FireHeal() {
   $("div.user-skill-bar").children()[2].click(); //Ignite
 }
 
+function DoubleImmune1() {
+  $("div.user-skill-bar").children()[3].click(); //Lightning
+  $("div.user-skill-bar").children()[4].click(); //Earth
+  $("div.user-skill-bar").children()[0].click(); //Antipode
+  $("div.user-skill-bar").children()[1].click(); //Freeze
+  $("div.user-skill-bar").children()[2].click(); //Ignite
+}
+
+function DoubleImmune2() {
+  $("div.user-skill-bar").children()[4].click(); //Lightning
+  $("div.user-skill-bar").children()[0].click(); //Antipode
+  $("div.user-skill-bar").children()[1].click(); //Freeze
+  $("div.user-skill-bar").children()[3].click(); //Earth
+  $("div.user-skill-bar").children()[2].click(); //Ignite
+}
+
+function find_duplicates(arr) {
+  var len=arr.length,
+      out=[],
+      counts={};
+
+  for (var i=0;i<len;i++) {
+    var item = arr[i];
+    counts[item] = counts[item] >= 1 ? counts[item] + 1 : 1;
+    if (counts[item] === 2) {
+      out.push(item);
+    }
+  }
+
+  return out;
+}
+
 //Used to avoid the bad enemies
 function Refresh( ) {
     ///Refreshes the page
@@ -178,127 +210,121 @@ function CombatManager() {
 
 //This is the actual combat function
 function Combat( ) {
-    //Collect the current information
-    //Grab and Break out Health DataFrame - no change required
-    var hdata = $('#user-stat-health span').text();
-    var hsplit = hdata.split('/');
-    var hpercent = Math.floor((hsplit[0] / hsplit[2]) * 100);
-    var hval   = hsplit[0];
-    //Grab and Break out Mana - no change required
-    var mdata   = $('#user-stat-mana span').text();
-    var msplit = mdata.split('/');
-    var mval   = msplit[0];
-    var mpercent = Math.floor((msplit[0] / msplit[2]) * 100);
-    //Grab Enemy Data - no change required
-    var enemydata  = $('span.in-combat-enemy-name').text();
-    var enemyname  = $('span.in-combat-enemy-name').text();
-    var enemyhp    = $('div.col-md-4.stat-health > span').text();
-    //Grab Combat Info
-    var lastCombatText = $('#combat_details div.combat-panel').children('div').last().text();
-    var creistselectric = lastCombatText.includes('Electric');
-    var cresistearth    = lastCombatText.includes('Earth');
-    var cresistice      = lastCombatText.includes('Ice');
-    var cresistfire     = lastCombatText.includes('Fire');
-    var chealsfire      = lastCombatText.includes('Fire2');
-    var chealsice       = lastCombatText.includes('Ice2');
-    var defeated        = lastCombatText.includes('You killed the');
+  //Collect the current information
+  //Grab and Break out Health DataFrame - no change required
+  var hdata = $('#user-stat-health span').text();
+  var hsplit = hdata.split('/');
+  var hpercent = Math.floor((hsplit[0] / hsplit[2]) * 100);
+  var hval   = hsplit[0];
+  //Grab and Break out Mana - no change required
+  var mdata   = $('#user-stat-mana span').text();
+  var msplit = mdata.split('/');
+  var mval   = msplit[0];
+  var mpercent = Math.floor((msplit[0] / msplit[2]) * 100);
+  //Grab Enemy Data - no change required
+  var enemydata  = $('span.in-combat-enemy-name').text();
+  var enemyname  = $('span.in-combat-enemy-name').text();
+  var enemyhp    = $('div.col-md-4.stat-health > span').text();
+  //Grab Combat Info
+  var lastCombatText = $('#combat_details div.combat-panel').children('div').last().text();
+  // var creistselectric = lastCombatText.includes('immune to Lightning Damage.');
+  // var cresistearth    = lastCombatText.includes('immune to Earth Damage.');
+  // var cresistice      = lastCombatText.includes('immune to Ice Damage.');
+  // var cresistfire     = lastCombatText.includes('immune to Fire Damage.');
+  // var chealsfire      = lastCombatText.includes('Fire2');
+  // var chealsice       = lastCombatText.includes('Ice2');
+  var defeated        = lastCombatText.includes('You killed the');
 
-    //Burning
-    var Ignited = ($('div.panel-body.user-status-effects.text-center > div > div > img').attr("alt") === "Fire3");
+  //Status Effects
+  var status         = $('img').map(function(){return this.alt;}).get();
+  var deduped        = find_duplicates(status);
+  var ignite         = deduped.includes("Fire3");
+  var iceimmune      = status.includes("Abyssal ice immunity");
+  var fireimmune     = status.includes("Abyssal fire immunity");
+  var physimmune     = status.includes("Abyssal physical immunity");
+  var electricimmune = status.includes("Abyssal electric immunity");
 
-    if ($('div.panel-body.user-status-effects.text-center > div > div > img').attr("alt") === "Fire3") {
-        var Burning = 1;
-    } else {
-        var Burning = 0;
-    };
+  console.log("Immunities: Ice, Fire, Phys, Electric");
+  console.log(iceimmune);
+  console.log(fireimmune);
+  console.log(physimmune);
+  console.log(electricimmune);
 
 //        (/(You used [^\.!]*\. You have 0 remaining\.|You have 0 [^\.!]* remaining.|You do not have any [^\.!]* remaining!|You don't have enough [^\.!]* to use that ability!|You do not have the [^\.!]* necessary to use that ability!)/.test(lastCombatText)) {
 //          setSkillUsability(previousAction.type, previousAction.arg, false);
 //        }
-    //Grab Potion Counts - sets value of 2->1 if empty, 3/4/5 to 2 if empty
-    var Item1Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(1)').text().replace(/\D/g,'');
-    var Item2Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(2)').text().replace(/\D/g,'');
-    var Item3Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(3)').text().replace(/\D/g,'');
-    var Item4Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(4)').text().replace(/\D/g,'');
+  //Grab Potion Counts - sets value of 2->1 if empty, 3/4/5 to 2 if empty
+  var Item1Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(1)').text().replace(/\D/g,'');
+  var Item2Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(2)').text().replace(/\D/g,'');
+  var Item3Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(3)').text().replace(/\D/g,'');
+  var Item4Count = $('#combat_details > div > div.panel-footer > div > div:nth-child(1) > div > div > button:nth-child(4)').text().replace(/\D/g,'');
 
-    //Start to Evaluate Combat Actions
-    //Current List
-    //1. Refresh
-    //2. Mana Location Configuration
-    //3. One Shot Combo Configuration
-    //3. If HP under health benchmark heal
-    //4. If enemy heals against Fire dmg
-    //   a. Use Fire Heal Kit
-    //5. All other cases
-    //   a. Use Ignite if Enemy not burning
-    //   b.
+  //Start to Evaluate Combat Actions
+  //Current List
+  //1. Refresh
+  //2. Mana Location Configuration
+  //3. One Shot Combo Configuration
+  //3. If HP under health benchmark heal
+  //4. If enemy heals against Fire dmg
+  //   a. Use Fire Heal Kit
+  //5. All other cases
+  //   a. Use Ignite if Enemy not burning
+  //   b.
 
-    console.log("Ignite Check");
-    console.log(Ignited);
-    console.log(lastCombatText);
-    console.log("defeated");
-    console.log(defeated);
-    console.log(defeated===true);
-    console.log(defeated===false);
-
-    if (RefreshList.includes(enemyname)) {
-        Refresh();
-    //Mana Refresh
-    } else if (window.location.href === ManaLocation) {
-      if (mval<(msplit[1]-ManaPotionVal)) {
-            ManaIngest();
-        } else {
-        this.document.location = FightLocation;
-        }
-    //One Shot Combo
-    } else if (window.location.href === SitLocation) {
-      if (TierOneEnemy.includes(enemyname)) {
-        if (hpercent<=HealHPX1) {
-          HealthIngest();
-        } else if (mval<=HealMPX1) {
-          ManaIngest();
-        } else {
-          StandardCombo();
-        }
-    } else if (TierTwoEnemy.includes(enemyname)) {
-        if (hpercent<=HealHPX2) {
-          HealthIngest();
-        } else if (mval<=HealMPX2) {
-          ManaIngest();
-        } else {
-          StandardCombo();
-        }
-    } else if (TierThreeEnemy.includes(enemyname)) {
-        if (hpercent<=HealHPX3) {
-          HealthIngest();
-        } else if (mval<=HealMPX3) {
-          ManaIngest();
-        } else {
-          StandardCombo();
-        }
-    } else if (defeated === true && mpercent<60) {
-      this.document.location = ManaLocation;
-    } else if (hpercent<HealHP) {
+  if (RefreshList.includes(enemyname)) {
+      Refresh();
+  //Mana Refresh
+  } else if (window.location.href === ManaLocation) {
+    if (hpercent < 20) {
       HealthIngest();
-    } else if (chealsfire===true) {
-      FireHeal();
+    } else if (mval<(msplit[1]-ManaPotionVal)) {
+          ManaIngest();
     } else {
-      if (Ignited === false) {
-        $("div.user-skill-bar").children()[2].click(); //Ignite
-      } else if (creistselectric===true) {
-        ElectricResist();
-      } else if (cresistearth===true) {
-        EarthResist();
-      } else if (cresistfire===true) {
-        FireResist();
-      } else if (cresistice===true) {
-        IceResist();
-      } else if (chealsice===true) {
-        IceHeal();
+      this.document.location = FightLocation;
+    }
+  //One Shot Combo
+  } else if (window.location.href === SitLocation) {
+    if (TierOneEnemy.includes(enemyname)) {
+      if (hpercent<=HealHPX1) {
+        HealthIngest();
+      } else if (mval<=HealMPX1) {
+        ManaIngest();
+      } else {
+        StandardCombo();
+      }
+    } else if (TierTwoEnemy.includes(enemyname)) {
+      if (hpercent<=HealHPX2) {
+        HealthIngest();
+      } else if (mval<=HealMPX2) {
+        ManaIngest();
+      } else {
+        StandardCombo();
+      }
+    } else if (TierThreeEnemy.includes(enemyname)) {
+      if (hpercent<=HealHPX3) {
+        HealthIngest();
+      } else if (mval<=HealMPX3) {
+        ManaIngest();
       } else {
         StandardCombo();
       }
     }
+  } else if (defeated === true && mpercent<60) {
+    this.document.location = ManaLocation;
+  } else if (hpercent<HealHP) {
+    HealthIngest();
+  } else if (mval<HealMP) {
+    ManaIngest();
+  } else if (ignite===false) {
+    $("div.user-skill-bar").children()[2].click(); //Ignite
+  } else if (fireimmune===false || iceimmune===false) {
+    StandardCombo();
+  } else if (iceimmune===true && fireimmune===true && electricimmune===true) {
+    DoubleImmune1();
+  } else if (iceimmune===true && fireimmune===true && physimmune===true) {
+    DoubleImmune2();
+  } else {
+    StandardCombo();
   }
 }
 
