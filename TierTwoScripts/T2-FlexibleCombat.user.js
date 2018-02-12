@@ -244,11 +244,11 @@ function Combat( ) {
   var physimmune     = status.includes("Abyssal physical immunity");
   var electricimmune = status.includes("Abyssal electric immunity");
 
-  console.log("Immunities: Ice, Fire, Phys, Electric");
-  console.log(iceimmune);
-  console.log(fireimmune);
-  console.log(physimmune);
-  console.log(electricimmune);
+  // console.log("Immunities: Ice, Fire, Phys, Electric");
+  // console.log(iceimmune);
+  // console.log(fireimmune);
+  // console.log(physimmune);
+  // console.log(electricimmune);
 
 //        (/(You used [^\.!]*\. You have 0 remaining\.|You have 0 [^\.!]* remaining.|You do not have any [^\.!]* remaining!|You don't have enough [^\.!]* to use that ability!|You do not have the [^\.!]* necessary to use that ability!)/.test(lastCombatText)) {
 //          setSkillUsability(previousAction.type, previousAction.arg, false);
